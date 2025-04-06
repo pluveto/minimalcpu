@@ -39,8 +39,8 @@ class RegisterFilePlugin(registerCount: Int) extends Plugin[MinimalCpu] {
       val rs2Data = (rs2Addr === 0) ? S(0, 8 bits) | regFile.readAsync(rs2Addr).asSInt
 
       // 将读取的数据放入 Stageables，传递给 Execute 阶段
-      output(RS1_DATA) := rs1Data
-      output(RS2_DATA) := rs2Data
+      insert(RS1_DATA) := rs1Data
+      insert(RS2_DATA) := rs2Data
     }
 
     // --- 写端口 (在 Execute 阶段) ---

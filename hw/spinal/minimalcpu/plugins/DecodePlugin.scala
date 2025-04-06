@@ -29,11 +29,11 @@ class DecodePlugin extends Plugin[MinimalCpu] {
       val imm = instruction(3 downto 0)
 
       // 将译码结果放入 Stageables，传递给下一阶段 (Execute)
-      output(OPCODE) := opcode
-      output(RD) := rd
-      output(RS1) := rs1
-      output(RS2) := rs2
-      output(IMM) := imm.resize(8) // 符号扩展或零扩展 (简单起见零扩展)
+      insert(OPCODE) := opcode
+      insert(RD) := rd
+      insert(RS1) := rs1
+      insert(RS2) := rs2
+      insert(IMM) := imm
     })
   }
 }

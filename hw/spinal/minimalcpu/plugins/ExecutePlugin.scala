@@ -20,40 +20,29 @@ class ExecutePlugin extends Plugin[MinimalCpu] {
 
       // 从 Decode 阶段获取数据
       val opcode = input(OPCODE)
-      val imm = input(IMM)
+      val imm = input(IMM).resize(8 bits)
       val rs1Data = input(RS1_DATA)
       val rs2Data = input(RS2_DATA)
 
       // ALU 逻辑
       var result = S(0, 8 bits)
-      var writeReg = False // 默认不写回
+      var writeReg = opcode === B"00" || opcode === B"01" || opcode === B"10"
 
       switch(opcode) {
-        is(B"00") { // LOADI
-          result := imm.asSInt
-          writeReg := True
-        }
-        is(B"01") { // ADD
-          result := rs1Data + rs2Data
-          writeReg := True
-        }
-        is(B"10") { // SUB
-          result := rs1Data - rs2Data
-          writeReg := True
-        }
-        is(B"11") { // NOP
-          // Do nothing
-          writeReg := False
-        }
+        is(B"00") { result := imm.asSInt }
+        is(B"01") { result := rs1Data + rs2Data }
+        is(B"10") { result := rs1Data - rs2Data }
+        is(B"11") { /* NOP */ }
       }
 
       // 将计算结果和写回信号放入 Stageables
       // ALU_RESULT 会被 RegFilePlugin 在同一阶段消耗用于写回
-      output(ALU_RESULT) := result
-      output(WRITE_REG) := writeReg
+      insert(ALU_RESULT) := result
+      insert(WRITE_REG) := writeReg
 
       // RD 信号也需要传递给 RegFilePlugin 的写端口逻辑
       // (RD 是从 Decode 阶段传递过来的 input(RD))
+      output(RD) := input(RD)
     }
   }
 }

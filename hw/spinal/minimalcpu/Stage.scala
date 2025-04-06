@@ -42,8 +42,6 @@ class Stage() extends Area{
   }
 
   def insert[T <: Data](key : Stageable[T]) : T = inserts.getOrElseUpdate(key.asInstanceOf[Stageable[Data]],outsideCondScope(key())).asInstanceOf[T] //.setPartialName(this,key.getName())
-//  def apply[T <: Data](key : Stageable[T]) : T = ???
-
 
   val arbitration = new Area{
     val haltItself  = False   //user settable, stuck the instruction, should only be set by the instruction itself

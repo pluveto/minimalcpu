@@ -15,7 +15,6 @@ trait Pipeline {
   var stages = ArrayBuffer[Stage]()
   var unremovableStages = mutable.Set[Stage]()
   val things = mutable.LinkedHashMap[PipelineThing[_], Any]()
-//  val services = ArrayBuffer[Any]()
 
   def stageBefore(stage: Stage) = stages(indexOf(stage) - 1)
 

@@ -24,7 +24,7 @@ class MinimalCpu(val config: MyCpuConfig) extends Component with Pipeline {
   // 4. 实例化 Plugins
   val _plugins = ArrayBuffer[Plugin[MinimalCpu]](
     // 负责 PC 和取指
-    new FetchPlugin(config.instructionRomSize),
+    new FetchPlugin(config.initialRom),
     // 负责指令译码
     new DecodePlugin(),
     // 负责寄存器文件读写
@@ -42,7 +42,7 @@ class MinimalCpu(val config: MyCpuConfig) extends Component with Pipeline {
 
 // --- 配置 (示例) ---
 case class MyCpuConfig(
-    instructionRomSize: Int = 256
+    initialRom: Seq[Bits] = Nil
 ) {
 
   // 由 FetchPlugin 产生 -> DecodePlugin 消耗
@@ -59,4 +59,8 @@ case class MyCpuConfig(
   // 由 ExecutePlugin 产生 -> RegFilePlugin 消耗 (在 Execute 阶段写入)
   object ALU_RESULT extends Stageable(SInt(8 bits))
   object WRITE_REG extends Stageable(Bool()) // 是否写回寄存器
+}
+
+class MinimalCpuVerilog extends App {
+  Config.spinal.generateVerilog(new MinimalCpu(MyCpuConfig()))
 }

@@ -12,13 +12,15 @@ import minimalcpu.MinimalCpu
 // --- Plugin 实现示例 ---
 
 // 取指插件
-class FetchPlugin(romSize: Int) extends Plugin[MinimalCpu] {
-  val pc = Reg(UInt(log2Up(romSize) bits)).init(0)
+class FetchPlugin(initialRom: Seq[Bits] = Nil) extends Plugin[MinimalCpu] {
+  val pc = Reg(UInt(8 bits)).init(0)
 
-  val instructionRom = Mem(Bits(8 bits), wordCount = romSize)
+  val instructionRom = Mem(Bits(8 bits), wordCount = 8)
 
   override def setup(pipeline: MinimalCpu): Unit = {
-    
+    if (initialRom.nonEmpty) {
+      // instructionRom.init(initialRom)
+    }
   }
 
   override def build(pipeline: MinimalCpu): Unit = {
@@ -31,7 +33,7 @@ class FetchPlugin(romSize: Int) extends Plugin[MinimalCpu] {
       // 从 ROM 读取指令
       val instruction = instructionRom.readSync(pc)
       // 将指令放入 Stageable，传递给下一阶段 (Decode)
-      output(INSTRUCTION) := instruction
+      insert(INSTRUCTION) := instruction
 
       // 更新 PC (简单自增，无跳转)
       pc := pc + 1
