@@ -167,6 +167,13 @@ trait Pipeline {
       stage.arbitration.isFiring := stage.arbitration.isValid && !stage.arbitration.isStuck && !stage.arbitration.removeIt
     }
 
+    if (stages.nonEmpty) {
+      val stage = stages(0)
+      stage.arbitration.isValid.setAsReg() init True
+      // stage.arbitration.isValid clearWhen (stage.arbitration.removeIt)
+      // stage.arbitration.isValid setWhen (!stage.arbitration.isStuck)
+    }
+
     for (stageIndex <- 1 until stages.length) {
       val stageBefore = stages(stageIndex - 1)
       val stage = stages(stageIndex)
